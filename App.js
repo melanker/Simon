@@ -190,7 +190,7 @@ async function fillScores() {
        scoreTable += (typeof score !== 'undefined') ? score : '';
        scoreTable += '\n';
       }
-//      console.log(scoreTable); /**/
+//      console.log(scoreTable);
 }
 //=================================================================
 //=================================================================
@@ -206,8 +206,6 @@ function App() {
     global.Idx = 0;
     store.dispatch(setIdx());
     }
-
-//fillScores();
 
   return (
     <NavigationContainer>
@@ -265,7 +263,7 @@ displ = setInterval( () => {
     }
       style = { styles.scorOutput }>
         <Text style = { styles.scores }>
-         { msg /* `You scored ${count} times ` + msg */ }
+         { msg }
         </Text>
       </ScrollView>
 
@@ -287,12 +285,11 @@ displ = setInterval( () => {
         onPress = {  () => {
             fillScores();
             navigation.navigate("About");
-//          console.log('idx :' + 0),
         } }/>
 
     </View>
     </View>
-/* */
+
   );
 }
 		/*   */
