@@ -32,29 +32,6 @@ import {
 } from 'react-native-responsive-screen';
 
 
-export default {
-  Button,
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  TextInput,
-  TouchableHighlight,
-  TouchableOpacity,
-  Text,
-  StatusBar,
-  Alert,
-  DeviceEventEmitter,
-  NativeEventEmitter,
-  PermissionsAndroid,
-  Vibration,
-  Keyboard,
-  Image,
-  wp,
-  hp
-}
-
-
  // =================  CSS / JSX  =================
  // ===============================================
  module.exports =
