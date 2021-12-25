@@ -103,8 +103,12 @@
 //=================================================================
  let tick = 0;
  let que  = 0;
- let btn  = ['a', 'c', 'd', 'b'];
- let tone = [700, 500, 400, 600];
+
+ const  reMap  = [0, 3, 1, 2];
+ const  btn  = ['a', 'c', 'd', 'b'];
+ const  tone = [700, 500, 400, 600];
+
+ const clrs = [["#FFBF00", "#FCF3CF", "#0000FF", "#AED6F1"], ["#FF0000", "#FADBD8", "#00FF00", "#DAF7A6"]];
  let usrQue = [];
  let botQue = [];
  let queIdx = 0;
@@ -149,13 +153,14 @@ class mainScreen extends React.Component {
  constructor() {
     super();
     this.state = {
-    output: "Press a Button to Start", info: "",
+    output: "Press a Button to Start", info: "", btns: [],
     values: {}, key: 0, btnA: 0, btnB: 0, btnC: 0, btnD: 0,
     name: '', sendText: '', page: 0, isStarted: false, modalVisible: false, txtVal: ''
     }
    this.togOn = 0;
    this.botAtPlay = 0;
    this.pTick;
+   
  }
 
 //=================================================================
@@ -163,8 +168,24 @@ class mainScreen extends React.Component {
 componentWillUnmount() {
    clearInterval(this.pTick);
 }
+/*
+componentDidMount() {
+}
+componentWillUnmount() {
+ this.gameStop();   
+}
+*/
 
+// TODO: rewrite properly	
+getBtnSt() {
+        if(this.state.btnA == 1) return 1;
+	if(this.state.btnB == 1) return 2;
+	if(this.state.btnC == 1) return 3;
+	if(this.state.btnD == 1) return 4;
+	return 0;
+}
 
+// TODO: rewrite properly
 btnTog(key, dir)    {
       switch(key) {
           case 'a':
@@ -193,6 +214,7 @@ gameStop() {
     this.setState({ output: `   YOUR SCORE:   ${ global.Score - 4 }` });
     this.state.isStarted = false;
     clearInterval(this.pTick);
+    clearInterval(this.pStat);
     clearInterval(playIt);
 	tick   = 0;
 	que    = 0; 
@@ -212,11 +234,11 @@ gameInit() {
  inCue  = 0;
  queIdx = 0;
  this.state.isStarted = true;
-
+//  console.log("queIdx: " + queIdx);
   for(let y = 0; y < 4; y++) {
   let randKey = Math.floor((Math.random() * 4));
   botQue[++queIdx] = randKey;
-
+//  console.log('idx :' + botQue[queIdx]);
  }
  this.playSeq();
 }
@@ -238,7 +260,8 @@ let t = 0;
      } else
     if(t == 2) {
   this.btnTog(btn[botQue[inCue++]], 1);
-
+//  console.log("btn: " + btn[botQue[inCue]]);
+//  console.log("inque: " + inCue + " idx: " + queIdx);
     }
  },
    100);
@@ -274,7 +297,7 @@ simonPlays() {
   if(this.botAtPlay == 1) {
   let randKey = Math.floor((Math.random() * 4));
   botQue[++queIdx] = randKey;
-
+//  console.log('rnd :' + randKey);
   this.playSeq();
   this.botAtPlay = 0;
  }
@@ -290,7 +313,7 @@ simonPlays() {
   if(tick == 10) {
       this.btnTog(btn[que], 0);
       que = que++ > 3 ? 0 : que;
-
+//      console.log("toggle!");
     } else
   if(tick == 0) {
       this.btnTog(btn[que], 1);
@@ -304,15 +327,76 @@ simonPlays() {
     15);
 
 //=================================================================
+/*
+  pStat = setInterval(() => {
+  },
+    255);
+*/
 
 tOut = () => setTimeout(() => {
       clearTimeout(this.tOut);
       clean();
+//        this.props.navigation.pop();
       this.props.navigation.navigate("Score Table");
   },
     350); 
 //=================================================================
 //=================================================================
+
+
+//===============================================================
+//===============================================================
+// Buttons are forwarded here
+doBtn(Key) {
+    switch(Key) {
+        case 0:
+      this.props.navigation.navigate("Main > About");
+            break;
+        case 1:
+
+            break;
+        case 2:
+      this.props.navigation.navigate("Main > Programming");
+            break;
+        case 3:
+            break;
+   }
+//  this.setState({  key: Key });
+//  console.log(this.props.route.path);
+}
+//===============================================================
+//===============================================================
+createBtns() {
+const btns = [];
+  for(let i = 0; i < 4; i += 2) {
+  btns.push(
+   <View   style = { styles.line } key = { i } > 
+     <TouchableHighlight activeOpacity = { 0.8 } underlayColor = { clrs[0][i] }
+	 style = { this.buttonStyle(((this.getBtnSt() - 1) == i) ? clrs[0][i] : clrs[0][i + 1]) }
+     onPress = { () => {
+      this.gameInit(),
+      this.playerRec(btn[reMap[i]]),
+      toneGen(tone[reMap[i]])
+			 }}><Text style = { styles.buttonText }></Text>
+     </TouchableHighlight>
+
+     <TouchableHighlight activeOpacity = { 0.8 } underlayColor = { clrs[1][i] }
+     style = { this.buttonStyle(((this.getBtnSt() - 1) == i + 1) ? clrs[1][i] : clrs[1][i + 1]) }
+     onPress = { () => {
+		this.gameInit(),
+		this.playerRec(btn[reMap[i + 1]]),
+		toneGen(tone[reMap[i + 1]])
+			}}><Text style = { styles.buttonText }></Text>
+     </TouchableHighlight>
+   </View>
+	);
+
+  }
+  return(btns);
+}
+//===============================================================
+//===============================================================
+
 
   buttonStyle = (clr) => {
     return  Object.assign( {}, styles.buttonGame, 
@@ -338,69 +422,9 @@ tOut = () => setTimeout(() => {
    { this.state.output === "" ? "" : this.state.output }
    </Text>
    </ScrollView>
-{/**/}
-     <View   style = { styles.line }> 
-     <TouchableHighlight
-     activeOpacity = { 0.8 }
-     underlayColor = "#FFBF00"
-     onPress = { () => {
-      this.gameInit(),
-      this.playerRec('a'),
-      toneGen(700),
-      console.log("yellow");
+	{/**/}
+	  { this.createBtns() }
 
-     }}
-     style = { this.buttonStyle(this.state.btnA ? "#FFBF00" : "#FCF3CF") }
-	  >
-      <Text style = { styles.buttonText }></Text>
-     </TouchableHighlight>
-
-   <TouchableHighlight
-     activeOpacity = { 0.8 }
-     underlayColor = "#0000FF"
-     style = { this.buttonStyle(this.state.btnB ? "#0000FF" : "#AED6F1") }
-     onPress = { () => {
-         this.gameInit(),
-         this.playerRec('b'),
-         toneGen(600),
-       console.log("blue");
-    }
-	   }
-          >
-     <Text style = {styles.buttonText}></Text>
- </TouchableHighlight>
- </View>
-
- <View style = { styles.line } >
-      <TouchableHighlight
-     activeOpacity = { 0.8 }
-     underlayColor = "#FF0000"
-        style = { this.buttonStyle(this.state.btnC ? "#FF0000" : "#FADBD8") }
-
-        onPress = { () => {
-            this.gameInit(),
-            this.playerRec('c'),
-            toneGen(500),
-            console.log("red");
-        }}>
-        <Text style = {styles.buttonText}></Text>
-      </TouchableHighlight>
-
-      <TouchableHighlight
-     activeOpacity = { 0.8 }
-     underlayColor = "#00FF00"
-        style = { this.buttonStyle(this.state.btnD ? "#00FF00" : "#DAF7A6") }
-
-        onPress = { () => {
-        this.gameInit(),
-        this.playerRec('d'),
-        console.log("green"),
-        toneGen(400)
-     }}>
-        <Text style = {styles.buttonText}></Text>
-      </TouchableHighlight>
- </View>
-      
       <TouchableHighlight
       underlayColor = "#FFF"
 	  style = { styles.buttonGameX }
@@ -430,7 +454,8 @@ tOut = () => setTimeout(() => {
                 style = {{ ...styles.buttonGameX, backgroundColor: "#2196F3" }}
                 onPress = { () => {
                 global.Idx = store.getState().reducer.idx;
-                global.Idx = (global.Idx == 0) ? 1 : global.Idx;
+                global.Idx = (global.Idx == 0) ? 1 : global.Idx; 
+//                console.log('t idx : ' + eText);  // 'Type  Here'
                 global.Idx = global.Idx++ > 9 ? 1 : global.Idx;
                 store.dispatch(setIdx());
                 eText = eText == '' ? 'Player_' + global.Idx.toString() : eText;
