@@ -103,10 +103,7 @@
 //=================================================================
  let tick = 0;
  let que  = 0;
-/*
- const  toneO = [700, 600, 500, 400];
- const  btnO  = ['a', 'b', 'c', 'd'];
-*/
+
  const  reMap  = [0, 3, 1, 2];
  const  btn  = ['a', 'c', 'd', 'b'];
  const  tone = [700, 500, 400, 600];
@@ -156,7 +153,7 @@ class mainScreen extends React.Component {
  constructor() {
     super();
     this.state = {
-    output: "Press a Button to Start", info: "", btns: [],//btns: {bA: 0, bB: 0, bC: 0, bD: 0},
+    output: "Press a Button to Start", info: "", btns: [],
     values: {}, key: 0, btnA: 0, btnB: 0, btnC: 0, btnD: 0,
     name: '', sendText: '', page: 0, isStarted: false, modalVisible: false, txtVal: ''
     }
@@ -179,20 +176,19 @@ componentWillUnmount() {
 }
 */
 
+// TODO: rewrite properly	
 getBtnSt() {
-    if(this.state.btnA == 1) return 1;
+        if(this.state.btnA == 1) return 1;
 	if(this.state.btnB == 1) return 2;
 	if(this.state.btnC == 1) return 3;
 	if(this.state.btnD == 1) return 4;
 	return 0;
 }
 
-
-
+// TODO: rewrite properly
 btnTog(key, dir)    {
       switch(key) {
           case 'a':
-            this.setState({ btns: [dir, 0, 0, 0] });
             this.setState({ btnA: dir });
               break;
           case 'b':
