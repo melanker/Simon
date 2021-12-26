@@ -41,12 +41,12 @@
 
  import * as React from 'react';
  import {
-	NavigationContainer 
+	NavigationContainer
         }
 	from '@react-navigation/native';
 
  import {
-	createNativeStackNavigator 
+	createNativeStackNavigator
         }
 	from '@react-navigation/native-stack';
 
@@ -61,7 +61,7 @@
     from 'react';
 
  import {
-  Button, 
+  Button,
   Modal,
   TextInput,
   TouchableWithoutFeedback,
@@ -123,7 +123,9 @@
 const toneGen = (frequency)  =>  {
 //                 (Hz)
   const duration   = 150; // ms
+/*
   Tone.play(frequency, duration);
+*/
 }
 
 const  storeData = async (key, value) => {
@@ -136,7 +138,7 @@ const  storeData = async (key, value) => {
 const  clean = () =>  {
     clearInterval(playIt);
 	tick   = 0;
-	que    = 0; 
+	que    = 0;
     inCue  = 0;
     queIdx = 0;
     outCue = 0;
@@ -153,14 +155,14 @@ class mainScreen extends React.Component {
  constructor() {
     super();
     this.state = {
-    output: "Press a Button to Start", info: "", btns: [],
-    values: {}, key: 0, btnA: 0, btnB: 0, btnC: 0, btnD: 0,
+    output: "Press a Button to Start", info: "", btns: [0, 0, 0, 0],
+    values: {}, key: 0,
     name: '', sendText: '', page: 0, isStarted: false, modalVisible: false, txtVal: ''
     }
    this.togOn = 0;
    this.botAtPlay = 0;
    this.pTick;
-   
+
  }
 
 //=================================================================
@@ -168,42 +170,28 @@ class mainScreen extends React.Component {
 componentWillUnmount() {
    clearInterval(this.pTick);
 }
-/*
-componentDidMount() {
-}
-componentWillUnmount() {
- this.gameStop();   
-}
-*/
 
-// TODO: rewrite properly	
-getBtnSt() {
-        if(this.state.btnA == 1) return 1;
-	if(this.state.btnB == 1) return 2;
-	if(this.state.btnC == 1) return 3;
-	if(this.state.btnD == 1) return 4;
-	return 0;
-}
-
-// TODO: rewrite properly
+// TODO: rewrite
 btnTog(key, dir)    {
       switch(key) {
           case 'a':
-            this.setState({ btnA: dir });
+            this.setState({ btns: [dir, 0, 0, 0] });
               break;
           case 'b':
-            this.setState({ btnB: dir });
+            this.setState({ btns: [0, dir, 0, 0] });
+
               break;
           case 'c':
-            this.setState({ btnC: dir });
+            this.setState({ btns: [0, 0, dir, 0] });
               break;
           case 'd':
-            this.setState({ btnD: dir });
+            this.setState({ btns: [0, 0, 0, dir] });
               break;
       }
 
-        if(dir && this.state.isStarted) 
-		 for(let i = 0; i < 4; i++) 
+//      console.log(this.state.btns);
+        if(dir && this.state.isStarted)
+		 for(let i = 0; i < 4; i++)
           if(key == btn[i])
 		   toneGen(tone[i]);
 }
@@ -217,7 +205,7 @@ gameStop() {
     clearInterval(this.pStat);
     clearInterval(playIt);
 	tick   = 0;
-	que    = 0; 
+	que    = 0;
     inCue  = 0;
     queIdx = 0;
     outCue = 0;
@@ -279,7 +267,7 @@ playerRec(key) {
     this.state.isStarted = false;
     this.setState({ modalVisible: true });
   }
-  console.log('usrkey :' + usrQue[outCue] + ' botkey :' + btn[botQue[outCue + 1]]);
+//  console.log('usrkey :' + usrQue[outCue] + ' botkey :' + btn[botQue[outCue + 1]]);
 
   if(outCue == queIdx - 1) {
   outCue = 0;
@@ -297,7 +285,6 @@ simonPlays() {
   if(this.botAtPlay == 1) {
   let randKey = Math.floor((Math.random() * 4));
   botQue[++queIdx] = randKey;
-//  console.log('rnd :' + randKey);
   this.playSeq();
   this.botAtPlay = 0;
  }
@@ -313,7 +300,6 @@ simonPlays() {
   if(tick == 10) {
       this.btnTog(btn[que], 0);
       que = que++ > 3 ? 0 : que;
-//      console.log("toggle!");
     } else
   if(tick == 0) {
       this.btnTog(btn[que], 1);
@@ -327,11 +313,7 @@ simonPlays() {
     15);
 
 //=================================================================
-/*
-  pStat = setInterval(() => {
-  },
-    255);
-*/
+//=================================================================
 
 tOut = () => setTimeout(() => {
       clearTimeout(this.tOut);
@@ -339,7 +321,7 @@ tOut = () => setTimeout(() => {
 //        this.props.navigation.pop();
       this.props.navigation.navigate("Score Table");
   },
-    350); 
+    350);
 //=================================================================
 //=================================================================
 
@@ -350,29 +332,25 @@ tOut = () => setTimeout(() => {
 doBtn(Key) {
     switch(Key) {
         case 0:
-      this.props.navigation.navigate("Main > About");
             break;
         case 1:
-
             break;
         case 2:
-      this.props.navigation.navigate("Main > Programming");
             break;
         case 3:
             break;
    }
-//  this.setState({  key: Key });
-//  console.log(this.props.route.path);
 }
 //===============================================================
 //===============================================================
+
 createBtns() {
 const btns = [];
   for(let i = 0; i < 4; i += 2) {
   btns.push(
-   <View   style = { styles.line } key = { i } > 
+   <View   style = { styles.line } key = { i } >
      <TouchableHighlight activeOpacity = { 0.8 } underlayColor = { clrs[0][i] }
-	 style = { this.buttonStyle(((this.getBtnSt() - 1) == i) ? clrs[0][i] : clrs[0][i + 1]) }
+	 style = { this.buttonStyle(this.state.btns[i] ? clrs[0][i] : clrs[0][i + 1]) }
      onPress = { () => {
       this.gameInit(),
       this.playerRec(btn[reMap[i]]),
@@ -381,7 +359,7 @@ const btns = [];
      </TouchableHighlight>
 
      <TouchableHighlight activeOpacity = { 0.8 } underlayColor = { clrs[1][i] }
-     style = { this.buttonStyle(((this.getBtnSt() - 1) == i + 1) ? clrs[1][i] : clrs[1][i + 1]) }
+     style = { this.buttonStyle(this.state.btns[i + 1] ? clrs[1][i] : clrs[1][i + 1]) }
      onPress = { () => {
 		this.gameInit(),
 		this.playerRec(btn[reMap[i + 1]]),
@@ -397,19 +375,17 @@ const btns = [];
 //===============================================================
 //===============================================================
 
-
   buttonStyle = (clr) => {
-    return  Object.assign( {}, styles.buttonGame, 
+    return  Object.assign( {}, styles.buttonGame,
     { backgroundColor: clr } );
   };
 //=================================================================
 //=================================================================
-
+// build the UI	{/**/}
   render() {
   return (
     <View   style = { styles.container }>
     <View>
-
     <ScrollView
     ref = { ref => this.scrollView = ref }
     onContentSizeChange = {(contentWidth, contentHeight) => {
@@ -417,46 +393,40 @@ const btns = [];
 	 }
 	}
     style = {styles.output} nestedScrollEnabled = { true }>
-
-   <Text  style = { styles.full }>
-   { this.state.output === "" ? "" : this.state.output }
-   </Text>
+       <Text style = { styles.full }> {
+       this.state.output === "" ? "" : this.state.output
+    } </Text>
    </ScrollView>
-	{/**/}
 	  { this.createBtns() }
-
       <TouchableHighlight
       underlayColor = "#FFF"
 	  style = { styles.buttonGameX }
         onPress = { () => {
-        this.gameInit(); 
-        } }>
-      <Text style = {styles.buttonText}>
-			{ this.state.isStarted ? 'PLAY!' : 'Hit To Start!' }
-	  </Text>
-      </TouchableHighlight>
-
-        <View style = { styles.view }>
+        this.gameInit();
+                    }}>
+           <Text style = {styles.buttonText}> {
+          this.state.isStarted ? 'PLAY!' : 'Hit To Start!'
+        } </Text>
+    </TouchableHighlight>
+      <View style = { styles.view }>
         <Modal transparent = { true }
-          visible = { this.state.modalVisible }
-          >
-          <View style = { styles.view }>
-            <View style = { styles.modalView }>
-              <Text style = { styles.modalText }>{ `Your Score: ${(global.Score - 4).toString()}`}</Text>
-
+          visible = { this.state.modalVisible }>
+           <View style = { styles.view }>
+             <View style = { styles.modalView }>
+                <Text style = { styles.modalText }>{
+                   `Your Score: ${(global.Score - 4).toString()}`
+                }</Text>
                 <TextInput
                 style = { styles.modalText }
                 placeholder = "Enter your Name!"
                 onChangeText = { text => eText = text }
                 defaultValue = { text }/>
-
-                              <TouchableHighlight
+                <TouchableHighlight
                 style = {{ ...styles.buttonGameX, backgroundColor: "#2196F3" }}
                 onPress = { () => {
                 global.Idx = store.getState().reducer.idx;
-                global.Idx = (global.Idx == 0) ? 1 : global.Idx; 
-//                console.log('t idx : ' + eText);  // 'Type  Here'
-                global.Idx = global.Idx++ > 9 ? 1 : global.Idx;
+                global.Idx = (global.Idx == 0) ? 1 : global.Idx;
+                global.Idx =  global.Idx++ > 9 ? 1 : global.Idx;
                 store.dispatch(setIdx());
                 eText = eText == '' ? 'Player_' + global.Idx.toString() : eText;
                 storeData('_name' + global.Idx.toString(),  eText);
@@ -465,11 +435,10 @@ const btns = [];
                 eText = '';
                 this.setState({ modalVisible: false });
                 this.tOut();
-                    }}>
+                }}>
                 <Text style = { styles.buttonText }> Confirm </Text>
-              </TouchableHighlight>
-
-              <TouchableHighlight
+                </TouchableHighlight>
+                <TouchableHighlight
                 style = {{ ...styles.buttonGameX, backgroundColor: "#2196F3" }}
                 onPress = {() => {
                    global.fillScr = 1;
@@ -478,18 +447,14 @@ const btns = [];
 				   }}>
                 <Text style = { styles.buttonText }> Cancel </Text>
               </TouchableHighlight>
-
-            </View>
-          </View>
-        </Modal>
-
-      </View>
-
-  </View>
- </View>
+             </View>
+           </View>
+         </Modal>
+       </View>
+     </View>
+   </View>
     );
   }
 }
 //=================================================================
 //=================================================================
-
