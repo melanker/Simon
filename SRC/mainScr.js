@@ -123,9 +123,7 @@
 const toneGen = (frequency)  =>  {
 //                 (Hz)
   const duration   = 150; // ms
-/*
   Tone.play(frequency, duration);
-*/
 }
 
 const  storeData = async (key, value) => {
