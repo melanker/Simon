@@ -179,7 +179,6 @@ btnTog(key, dir)    {
               break;
           case 'b':
             this.setState({ btns: [0, dir, 0, 0] });
-
               break;
           case 'c':
             this.setState({ btns: [0, 0, dir, 0] });
